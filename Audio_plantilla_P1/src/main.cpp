@@ -1,8 +1,13 @@
+#include "../openal/AL/al.h"
+#include "../openal/AL/alc.h"
+#ifdef _MSC_VER
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 #define LITE_GFX_IMPLEMENTATION
 
-
-
 #include "main.h"
+
 
 //#include "Font.h"
 #include "MyVector2D.h"
@@ -12,7 +17,11 @@
 #include <iostream>
 #include <vector>
 
-
+#include <sstream>
+#include <cstring>////
+#include <string>//
+#include <fstream>     
+#include <iterator>
 
 using namespace std;
 
@@ -43,6 +52,77 @@ const char* bee_fileName = "data/bee_anim.png";
 
 void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime);
 
+
+
+
+
+
+
+
+
+
+
+
+bool isBigEndian()
+{
+	int a = 1;
+	return !((char*)&a)[0];
+}
+
+int convertToInt(char* buffer, int len)
+{
+	int a = 0;
+	if (!isBigEndian())
+		for (int i = 0; i < len; i++)
+			((char*)&a)[i] = buffer[i];
+	else
+		for (int i = 0; i < len; i++)
+			((char*)&a)[3 - i] = buffer[i];
+	return a;
+}
+
+char* loadWAV(const char* fn, int& chan, int& samplerate, int& bps, int& size)
+{
+	char buffer[4];
+	std::ifstream in(fn, std::ios::binary);
+	in.read(buffer, 4);
+	if (strncmp(buffer, "RIFF", 4) != 0)
+	{
+		std::cout << "this is not a valid WAVE file" << std::endl;
+		return NULL;
+	}
+	in.read(buffer, 4);
+	in.read(buffer, 4);      //WAVE
+	in.read(buffer, 4);      //fmt
+	in.read(buffer, 4);      //16
+	in.read(buffer, 2);      //1
+	in.read(buffer, 2);
+	chan = convertToInt(buffer, 2);
+	in.read(buffer, 4);
+	samplerate = convertToInt(buffer, 4);
+	in.read(buffer, 4);
+	in.read(buffer, 2);
+	in.read(buffer, 2);
+	bps = convertToInt(buffer, 2);
+	in.read(buffer, 4);      //data
+	in.read(buffer, 4);
+	size = convertToInt(buffer, 4);
+	char* data = new char[size];
+	in.read(data, size);
+	return data;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 int main()
 {
 	//Iniciar libreria GFWX
@@ -56,18 +136,68 @@ int main()
 		myWindow = (glfwCreateWindow(weightWindowScreen, heightWindowScreen, "HelloWorldWindowed", nullptr, nullptr));
 
 		//Cambiar nombre a la ventana
-		glfwSetWindowTitle(myWindow, "Practica4 FerCalderon");
+		glfwSetWindowTitle(myWindow, "Audio_Practica1 FerCalderon");
 
 		//Asociar contexto OpenGL a ventana
 		glfwMakeContextCurrent(myWindow);
 
+
+		////////// INICIAR LIBRERIA OPENAL //////////
+		  //  //Crear Dispositivo
+		ALCdevice* myDevice = alcOpenDevice(NULL); //Con NULL selecciono el dispositivo por defecto
+		//  //Crear Context y asociarlo con myDevice
+		if (myDevice)
+		{
+			ALCcontext* myContext = alcCreateContext(myDevice, NULL);
+			alcMakeContextCurrent(myContext);
+			cout << "CORRECTA INICIALIZACION OPENAL lib\n";
+		}
+
+
+
+		
 		lgfx_setup2d(weightWindowScreen, heightWindowScreen);
-
-		//MyVec2D myCursorPos;
-
-		previousTime = glfwGetTime();
-
+		
 		//Carga de ficheros de Fuentes
+
+
+		int channel, sampleRate, bps, size;
+		char* data = loadWAV("E:/123 MasterProgra 2021/Master Programación 2021 2022/AudioClases/p1Audio/New folder/Practica de Audio/plantilla/data/file1.wav", channel, sampleRate, bps, size);
+
+		unsigned int bufferid, format;
+		alGenBuffers(1, &bufferid);
+		if (channel == 1)
+		{
+			if (bps == 8)
+			{
+				format = AL_FORMAT_MONO8;
+			}
+			else
+			{
+				format = AL_FORMAT_MONO16;
+
+			}
+		}
+		else
+		{
+			if (bps == 8)
+			{
+				format = AL_FORMAT_STEREO8;
+			}
+			else
+			{
+				format = AL_FORMAT_STEREO16;
+
+			}
+		}
+
+		alBufferData(bufferid, format, data, size, sampleRate);
+		unsigned int sourceid;
+		alGenSources(1, &sourceid);
+		alSourcei(sourceid, AL_BUFFER, bufferid);
+		alSourcePlay(sourceid);
+
+		
 
 #pragma region LOAD_FONTS
 
@@ -106,6 +236,7 @@ int main()
 
 #pragma endregion LOAD_TEXTURES
 
+		previousTime = glfwGetTime();
 
 		while (glfwWindowShouldClose(myWindow) != 1)
 		{
@@ -128,6 +259,12 @@ int main()
 					glfwSetWindowShouldClose(myWindow, 1);
 				}
 
+
+				/*if (glfwGetKey(myWindow, GLFW_KEY_A))
+				{
+					alSourcePlay(sourceid);
+				}*/
+				
 
 				//------------------   UPDATE LOGIC!------------------------------ //////////////////////////////////////////////////
 				//Posicion del raton
@@ -186,6 +323,27 @@ int main()
 		}
 
 		//Liberar recursos
+
+
+
+		 //Libero recursos de OpenAL
+
+		alDeleteSources(1, &sourceid);
+		alDeleteBuffers(1, &bufferid);
+
+
+
+		ALCcontext* currentContext = alcGetCurrentContext();
+		myDevice = alcGetContextsDevice(currentContext);
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(currentContext);
+		alcCloseDevice(myDevice);
+
+		delete[] data;
+
+
+
+		
 
 #pragma region UNLOAD_TEXTURES
 		ptrBee->m_texture = nullptr;
@@ -292,6 +450,7 @@ void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime)
 	
 	std::cout << _sprite.GetRotation() << " bool VALUEEEE\n\n";
 
+	//Block Limits and Return to Angle 0;
 	if (bIsMoving)
 	{
 		if (bRightRotation && _sprite.GetRotation() <= (-_sprite.GetAngleRotationMax()))//Right limit
