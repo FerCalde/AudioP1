@@ -251,7 +251,7 @@ void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime)
 	_sprite.SetScale(_sprite.GetScale());
 
 	//Rotation Update
-	
+
 	//@TODO: CORREGIR ROTATION
 	MyVec2D dir = (myCursorPos - _sprite.GetPosition());
 
@@ -276,31 +276,39 @@ void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime)
 	}
 	else
 	{
-		if (_sprite.GetRotation() < 1.f && _sprite.GetRotation() > -1.f)
-		{
-
-		}
-		if (dir.x <= fToleranceMovement && dir.x >= (-fToleranceMovement))
+		if (_sprite.GetRotation() > 1.f)
 		{
 			bRightRotation = true;
 		}
-		else if (dir.x < (-fToleranceMovement))
+		else if(_sprite.GetRotation() < -1.f)
 		{
 			bRightRotation = false;
-		}
+		}	
 	}
+	
+	!bRightRotation ? _sprite.SetSpeedRotation(std::abs(_sprite.GetSpeedRotation())) : _sprite.SetSpeedRotation(std::abs(_sprite.GetSpeedRotation()) * (-1));
 
 	newRotation = _sprite.GetRotation() + (_sprite.GetSpeedRotation() * _fDeltaTime);
 	
+	std::cout << _sprite.GetRotation() << " bool VALUEEEE\n\n";
+
 	if (bIsMoving)
 	{
-		if (!bRightRotation && newRotation <= (-_sprite.m_fAngleRotationMax)) /*if (newRotation < (-_sprite.GetAngleRotationMax()))*/ //Se entiende Peor
+		if (bRightRotation && _sprite.GetRotation() <= (-_sprite.GetAngleRotationMax()))//Right limit
 		{
-			newRotation = (-_sprite.m_fAngleRotationMax);
+			newRotation = (-_sprite.GetAngleRotationMax());
 		}
-		else if (bRightRotation && newRotation >= _sprite.m_fAngleRotationMax)
+		else if (!bRightRotation && _sprite.GetRotation() >= (_sprite.GetAngleRotationMax()))//Left limit
 		{
-			newRotation = _sprite.m_fAngleRotationMax;
+			newRotation = (_sprite.GetAngleRotationMax());
+		}
+
+	}
+	else
+	{
+		if (_sprite.GetRotation() <= 1.f && _sprite.GetRotation() >= -1.f)
+		{
+			newRotation = 0;
 		}
 	}
 
