@@ -8,11 +8,12 @@ class AudioBuffer
 private:
 	ALuint* m_bufferID;
 	
+	
 public:
 	AudioBuffer();
 	~AudioBuffer();
 
 	static AudioBuffer* load(const char* filename);
-	ALuint* getAlBuffer() const;
+	ALuint* GetAlBufferID() const;
 
 };

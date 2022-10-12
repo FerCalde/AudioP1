@@ -1,13 +1,19 @@
 #pragma once
+#include "AudioBuffer.h"
 #include "MyVector2D.h"
 
-class AudioBuffer;
+//#include "AL/al.h"
+
+//class AudioBuffer;
 
 class AudioSource
 {
 	AudioBuffer* m_audioBuffer;
+	ALuint* m_sourceBufferID;
+
 public:
-	AudioSource(AudioBuffer* _audioBuffer);
+	AudioSource(AudioBuffer* _audioBuffer, bool _PlayOnAwake = false);
+	~AudioSource();
 
 	float m_fPitch = 1.f;
 	void SetPitch(float _fPitch = 1);
@@ -31,6 +37,8 @@ public:
 	void Pause();
 	bool IsPlaying() const;
 
-
+	bool m_bIsPlaying = false;
+	//bool m_bPlayOnAwake = false;
+	//void SetPlayOnAwake(); //Directamente en el constructor
 
 };

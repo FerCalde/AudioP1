@@ -10,7 +10,18 @@
 
 
 
-ALuint* AudioBuffer::getAlBuffer() const
+AudioBuffer::AudioBuffer()
+{
+	m_bufferID = new ALuint;
+}
+
+AudioBuffer::~AudioBuffer()
+{
+	alDeleteBuffers(1, m_bufferID);
+	m_bufferID = nullptr;
+}
+
+ALuint* AudioBuffer::GetAlBufferID() const
 {
 	return m_bufferID;
 }
