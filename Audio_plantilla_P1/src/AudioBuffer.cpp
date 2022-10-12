@@ -21,6 +21,11 @@ AudioBuffer::~AudioBuffer()
 	m_bufferID = nullptr;
 }
 
+AudioBuffer* AudioBuffer::Load(const char* filename)
+{
+	return nullptr;
+}
+
 ALuint* AudioBuffer::GetAlBufferID() const
 {
 	return m_bufferID;

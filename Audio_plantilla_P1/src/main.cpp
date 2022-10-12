@@ -10,6 +10,9 @@
 
 
 //#include "Font.h"
+#include "AudioSource.h"
+#include "AudioListener.h"
+
 #include "MyVector2D.h"
 #include "Sprite.h"
 
@@ -22,6 +25,9 @@
 #include <string>//
 #include <fstream>     
 #include <iterator>
+
+
+
 
 using namespace std;
 
@@ -197,11 +203,22 @@ int main()
 		}
 
 		alBufferData(bufferid, format, data, size, sampleRate);
-		unsigned int sourceid;
-		alGenSources(1, &sourceid);
-		alSourcei(sourceid, AL_BUFFER, bufferid);
-		alSourcePlay(sourceid);
 
+		//CREATE SOURCE 
+		// 
+		AudioBuffer* myAudioBuffer = new AudioBuffer();
+		AudioSource* myAudioSource = new AudioSource(myAudioBuffer, true);
+
+		AudioListener* myAudioListener = new AudioListener(0, 0, 0);
+		
+		//unsigned int sourceid;
+		//alGenSources(1, &sourceid);
+		//alSourcei(sourceid, AL_BUFFER, bufferid);
+		//alSourcePlay(sourceid);
+
+
+
+		
 		
 
 #pragma region LOAD_FONTS
@@ -264,10 +281,10 @@ int main()
 					glfwSetWindowShouldClose(myWindow, 1);
 				}
 
-				if (glfwGetKey(myWindow, GLFW_KEY_A))
-				{
-					alSourcePlay(sourceid);
-				}
+				//if (glfwGetKey(myWindow, GLFW_KEY_A))
+				//{
+					//alSourcePlay(sourceid);
+				//}
 				
 
 				//------------------   UPDATE LOGIC!------------------------------ //////////////////////////////////////////////////
@@ -328,27 +345,6 @@ int main()
 
 		//Liberar recursos
 
-
-
-		 //Libero recursos de OpenAL
-
-		alDeleteSources(1, &sourceid);
-		alDeleteBuffers(1, &bufferid);
-
-
-
-		ALCcontext* currentContext = alcGetCurrentContext();
-		myDevice = alcGetContextsDevice(currentContext);
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(currentContext);
-		alcCloseDevice(myDevice);
-
-		delete[] data;
-
-
-
-		
-
 #pragma region UNLOAD_TEXTURES
 		ptrBee->m_texture = nullptr;
 		delete ptrBee;
@@ -387,6 +383,33 @@ int main()
 		//delete text_HelloWorld;
 		//text_HelloWorld = nullptr;*/
 #pragma endregion UNLOAD_FONTS
+
+		 //Libero recursos de OpenAL
+
+		delete myAudioSource;
+		myAudioSource = nullptr;
+		myAudioBuffer = nullptr;
+		delete myAudioListener;
+		myAudioListener = nullptr;
+		
+		 //alDeleteSources(1, &sourceid);
+		alDeleteBuffers(1, &bufferid);
+
+
+
+		ALCcontext* currentContext = alcGetCurrentContext();
+		myDevice = alcGetContextsDevice(currentContext);
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(currentContext);
+		alcCloseDevice(myDevice);
+
+		delete[] data;
+		data = nullptr;
+
+
+		
+
+
 
 		std::cout << "Terminar GLFW \n";
 		glfwTerminate();

@@ -13,7 +13,7 @@ public:
 	AudioBuffer();
 	~AudioBuffer();
 
-	static AudioBuffer* load(const char* filename);
+	static AudioBuffer* Load(const char* filename);
 	ALuint* GetAlBufferID() const;
 
 };
