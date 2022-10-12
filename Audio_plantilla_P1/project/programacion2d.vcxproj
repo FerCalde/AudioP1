@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioBuffer.cpp" />
+    <ClCompile Include="..\src\AudioListener.cpp" />
+    <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\Font.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\MyVector2D.cpp" />
@@ -27,6 +30,9 @@
   <ItemGroup>
     <ClInclude Include="..\lib\litegfx.h" />
     <ClInclude Include="..\lib\stb_truetype.h" />
+    <ClInclude Include="..\src\AudioBuffer.h" />
+    <ClInclude Include="..\src\AudioListener.h" />
+    <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\Font.h" />
     <ClInclude Include="..\src\main.h" />
     <ClInclude Include="..\src\MyVector2D.h" />

@@ -165,7 +165,12 @@ int main()
 		char* data = loadWAV("E:/123 MasterProgra 2021/Master Programación 2021 2022/AudioClases/p1Audio/New folder/Practica de Audio/plantilla/data/file1.wav", channel, sampleRate, bps, size);
 
 		unsigned int bufferid, format;
+		alGetError();
 		alGenBuffers(1, &bufferid);
+		/*if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			DisplayALError("alGenBuffers: ", error);
+		}*/
 		if (channel == 1)
 		{
 			if (bps == 8)
@@ -259,11 +264,10 @@ int main()
 					glfwSetWindowShouldClose(myWindow, 1);
 				}
 
-
-				/*if (glfwGetKey(myWindow, GLFW_KEY_A))
+				if (glfwGetKey(myWindow, GLFW_KEY_A))
 				{
 					alSourcePlay(sourceid);
-				}*/
+				}
 				
 
 				//------------------   UPDATE LOGIC!------------------------------ //////////////////////////////////////////////////
