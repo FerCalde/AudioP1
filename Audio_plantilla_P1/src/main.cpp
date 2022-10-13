@@ -157,8 +157,8 @@ int main()
 
 		lgfx_setup2d(weightWindowScreen, heightWindowScreen);
 
-		
-		
+
+
 		//Carga de ficheros de Fuentes
 
 
@@ -196,25 +196,25 @@ int main()
 		//alBufferData(bufferid, format, data, size, sampleRate);
 
 		//CREATE BUFFER
-		AudioBuffer* myAudioBuffer = new AudioBuffer("data/file1.wav");
+		AudioBuffer* myAudioBuffer = new AudioBuffer("data/CantinaBand60.wav");
 
 		//CREATE SOURCE 
 		// 
-		AudioSource* myAudioSource = new AudioSource(myAudioBuffer, false);
-		
+		AudioSource* myAudioSource = new AudioSource(myAudioBuffer, true);
+
 
 		//CREATE LISTENER
 		AudioListener* myAudioListener = new AudioListener(0, 0, 0);
-		
+
 		//unsigned int sourceid;
 		//alGenSources(1, &sourceid);
 		//alSourcei(sourceid, AL_BUFFER, bufferid);
 		//alSourcePlay(sourceid);
 
-		myAudioSource->Play();
 
-		
-		
+
+
+
 
 #pragma region LOAD_FONTS
 
@@ -276,13 +276,53 @@ int main()
 					glfwSetWindowShouldClose(myWindow, 1);
 				}
 
-				if (glfwGetKey(myWindow, GLFW_KEY_A))
+				if (glfwGetKey(myWindow, GLFW_KEY_I))
 				{
 					myAudioSource->Play();
-
-					//alSourcePlay(sourceid);
 				}
-				
+				if (glfwGetKey(myWindow, GLFW_KEY_P))
+				{
+					myAudioSource->Pause();
+				}
+				if (glfwGetKey(myWindow, GLFW_KEY_O))
+				{
+					myAudioSource->Stop();
+				}
+				if (glfwGetKey(myWindow, GLFW_KEY_L))
+				{
+					myAudioSource->SetLooping(!myAudioSource->GetLooping());
+				}
+				//MODIFY PITCH
+				if (glfwGetKey(myWindow, GLFW_KEY_UP))
+				{
+					float fAuxPitch = myAudioSource->GetPitch() + (1.f * deltaTime);
+					if (fAuxPitch < 3)
+					{
+						myAudioSource->SetPitch(fAuxPitch);
+					}
+				}
+				if (glfwGetKey(myWindow, GLFW_KEY_DOWN))
+				{
+					float fAuxPitch = myAudioSource->GetPitch() + (-1.f * deltaTime);
+					if (fAuxPitch > 0.5f)
+					{
+						myAudioSource->SetPitch(fAuxPitch);
+					}
+				}
+				//MODIFY POS
+				if (glfwGetKey(myWindow, GLFW_KEY_RIGHT))
+				{
+					MyVec2D auxPos = myAudioSource->GetPosition();
+					auxPos.x += (0.1f * deltaTime);
+					myAudioSource->SetPosition(auxPos);
+				}
+				if (glfwGetKey(myWindow, GLFW_KEY_LEFT))
+				{
+					MyVec2D auxPos = myAudioSource->GetPosition();
+					auxPos.x += (-0.1f * deltaTime);
+					myAudioSource->SetPosition(auxPos);
+				}
+
 
 				//------------------   UPDATE LOGIC!------------------------------ //////////////////////////////////////////////////
 				//Posicion del raton
@@ -381,16 +421,16 @@ int main()
 		//text_HelloWorld = nullptr;*/
 #pragma endregion UNLOAD_FONTS
 
-		 //Libero recursos de OpenAL
+		//Libero recursos de OpenAL
 
 		delete myAudioSource;
 		myAudioSource = nullptr;
 		myAudioBuffer = nullptr;
 		delete myAudioListener;
 		myAudioListener = nullptr;
-		
-		 //alDeleteSources(1, &sourceid);
-		//alDeleteBuffers(1, &bufferid);
+
+		//alDeleteSources(1, &sourceid);
+	   //alDeleteBuffers(1, &bufferid);
 
 
 
@@ -404,7 +444,7 @@ int main()
 		//data = nullptr;
 
 
-		
+
 
 
 
@@ -462,16 +502,16 @@ void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime)
 		{
 			bRightRotation = true;
 		}
-		else if(_sprite.GetRotation() < -1.f)
+		else if (_sprite.GetRotation() < -1.f)
 		{
 			bRightRotation = false;
-		}	
+		}
 	}
-	
+
 	!bRightRotation ? _sprite.SetSpeedRotation(std::abs(_sprite.GetSpeedRotation())) : _sprite.SetSpeedRotation(std::abs(_sprite.GetSpeedRotation()) * (-1));
 
 	newRotation = _sprite.GetRotation() + (_sprite.GetSpeedRotation() * _fDeltaTime);
-	
+
 	std::cout << _sprite.GetRotation() << " bool VALUEEEE\n\n";
 
 	//Block Limits and Return to Angle 0;

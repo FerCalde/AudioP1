@@ -51,16 +51,31 @@ void AudioSource::SetPitch(float _fPitch)
 	alSourcef(*m_sourceBufferID, AL_PITCH, m_fPitch);
 }
 
+float AudioSource::GetPitch()
+{
+	return m_fPitch;
+}
+
 void AudioSource::SetGain(float _fGain)
 {
 	m_fGain = _fGain;
 	alSourcef(*m_sourceBufferID, AL_GAIN, m_fGain);
 }
 
+float AudioSource::GetGain()
+{
+	return m_fGain;
+}
+
 void AudioSource::SetLooping(bool _bLoop)
 {
 	m_bLoop = _bLoop;
 	alSourcei(*m_sourceBufferID, AL_LOOPING, m_bLoop);
+}
+
+bool AudioSource::GetLooping()
+{
+	return m_bLoop;
 }
 
 void AudioSource::SetPosition(float _x, float _y, float _z)
@@ -78,6 +93,11 @@ void AudioSource::SetPosition(MyVec2D _pos)
 	m_Position = _pos;
 
 	alSource3f(*m_sourceBufferID, AL_POSITION, m_Position.x, m_Position.y, 0);
+}
+
+MyVec2D AudioSource::GetPosition()
+{
+	return m_Position;
 }
 
 void AudioSource::SetVelocity(float _x, float _y, float _z)
