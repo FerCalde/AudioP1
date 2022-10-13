@@ -12,22 +12,22 @@ AudioSource::AudioSource(AudioBuffer* _audioBuffer, bool _PlayOnAwake)
 	m_Velocity(0, 0),
 	m_bIsPlaying(false)
 	//m_bPlayOnAwake(_PlayOnAwake)
-	
+
 {
 
 	//Generate Source and asign id into sourceBufferID
-	ALuint* m_sourceBufferID = new ALuint;
-	alGenSources(1, m_sourceBufferID); 
-	
+	m_sourceBufferID = new ALuint;
+	alGenSources(1, m_sourceBufferID);
+
 	//SetupEffects
 	alSourcei(*m_sourceBufferID, AL_LOOPING, m_bLoop);
 	alSourcef(*m_sourceBufferID, AL_PITCH, m_fPitch);
 	alSourcef(*m_sourceBufferID, AL_GAIN, m_fGain);
 	alSource3f(*m_sourceBufferID, AL_POSITION, m_Position.x, m_Position.y, 0);
 	alSource3f(*m_sourceBufferID, AL_VELOCITY, m_Velocity.x, m_Velocity.y, 0);
-	
+
 	//Assign buffer to source
-	alSourcei(*m_sourceBufferID, AL_BUFFER, *m_audioBuffer->GetAlBufferID()); 
+	alSourcei(*m_sourceBufferID, AL_BUFFER, *m_audioBuffer->GetAlBufferID());
 
 	if (_PlayOnAwake)	/*if(m_bPlayOnAwake)*/
 	{
@@ -76,7 +76,7 @@ void AudioSource::SetPosition(float _x, float _y, float _z)
 void AudioSource::SetPosition(MyVec2D _pos)
 {
 	m_Position = _pos;
-	
+
 	alSource3f(*m_sourceBufferID, AL_POSITION, m_Position.x, m_Position.y, 0);
 }
 
@@ -91,14 +91,17 @@ void AudioSource::SetVelocity(float _x, float _y, float _z)
 void AudioSource::SetVelocity(MyVec2D _vel)
 {
 	m_Velocity = _vel;
-	
+
 	alSource3f(*m_sourceBufferID, AL_VELOCITY, m_Velocity.x, m_Velocity.y, 0);
 }
 
 void AudioSource::Play()
 {
-	alSourcePlay(*m_sourceBufferID);
-	m_bIsPlaying = true;
+	//if (m_sourceBufferID)
+	{
+		alSourcePlay(*m_sourceBufferID);
+		m_bIsPlaying = true;
+	}
 }
 
 void AudioSource::Stop()

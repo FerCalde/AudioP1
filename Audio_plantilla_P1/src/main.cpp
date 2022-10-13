@@ -64,11 +64,6 @@ void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime);
 
 
 
-
-
-
-
-
 bool isBigEndian()
 {
 	int a = 1;
@@ -160,55 +155,55 @@ int main()
 		}
 
 
+		lgfx_setup2d(weightWindowScreen, heightWindowScreen);
 
 		
-		lgfx_setup2d(weightWindowScreen, heightWindowScreen);
 		
 		//Carga de ficheros de Fuentes
 
 
-		int channel, sampleRate, bps, size;
-		char* data = loadWAV("E:/123 MasterProgra 2021/Master Programación 2021 2022/AudioClases/p1Audio/New folder/Practica de Audio/plantilla/data/file1.wav", channel, sampleRate, bps, size);
+		//int channel, sampleRate, bps, size;
+		//char* data = loadWAV("E:/123 MasterProgra 2021/Master Programación 2021 2022/AudioClases/p1Audio/New folder/Practica de Audio/plantilla/data/file1.wav", channel, sampleRate, bps, size);
+		//unsigned int bufferid, format;
+		//alGetError();
+		//alGenBuffers(1, &bufferid);
+		//if ((error = alGetError()) != AL_NO_ERROR)
+		//{
+		//	DisplayALError("alGenBuffers: ", error);
+		//}*/
+		//if (channel == 1)
+		//{
+		//	if (bps == 8)
+		//	{
+		//		format = AL_FORMAT_MONO8;
+		//	}
+		//	else
+		//	{
+		//		format = AL_FORMAT_MONO16;
+		//	}
+		//}
+		//else
+		//{
+		//	if (bps == 8)
+		//	{
+		//		format = AL_FORMAT_STEREO8;
+		//	}
+		//	else
+		//	{
+		//		format = AL_FORMAT_STEREO16;
+		//	}
+		//}
+		//alBufferData(bufferid, format, data, size, sampleRate);
 
-		unsigned int bufferid, format;
-		alGetError();
-		alGenBuffers(1, &bufferid);
-		/*if ((error = alGetError()) != AL_NO_ERROR)
-		{
-			DisplayALError("alGenBuffers: ", error);
-		}*/
-		if (channel == 1)
-		{
-			if (bps == 8)
-			{
-				format = AL_FORMAT_MONO8;
-			}
-			else
-			{
-				format = AL_FORMAT_MONO16;
-
-			}
-		}
-		else
-		{
-			if (bps == 8)
-			{
-				format = AL_FORMAT_STEREO8;
-			}
-			else
-			{
-				format = AL_FORMAT_STEREO16;
-
-			}
-		}
-
-		alBufferData(bufferid, format, data, size, sampleRate);
+		//CREATE BUFFER
+		AudioBuffer* myAudioBuffer = new AudioBuffer("data/file1.wav");
 
 		//CREATE SOURCE 
 		// 
-		AudioBuffer* myAudioBuffer = new AudioBuffer();
-		AudioSource* myAudioSource = new AudioSource(myAudioBuffer, true);
+		AudioSource* myAudioSource = new AudioSource(myAudioBuffer, false);
+		
 
+		//CREATE LISTENER
 		AudioListener* myAudioListener = new AudioListener(0, 0, 0);
 		
 		//unsigned int sourceid;
@@ -216,7 +211,7 @@ int main()
 		//alSourcei(sourceid, AL_BUFFER, bufferid);
 		//alSourcePlay(sourceid);
 
-
+		myAudioSource->Play();
 
 		
 		
@@ -281,10 +276,12 @@ int main()
 					glfwSetWindowShouldClose(myWindow, 1);
 				}
 
-				//if (glfwGetKey(myWindow, GLFW_KEY_A))
-				//{
+				if (glfwGetKey(myWindow, GLFW_KEY_A))
+				{
+					myAudioSource->Play();
+
 					//alSourcePlay(sourceid);
-				//}
+				}
 				
 
 				//------------------   UPDATE LOGIC!------------------------------ //////////////////////////////////////////////////
@@ -393,7 +390,7 @@ int main()
 		myAudioListener = nullptr;
 		
 		 //alDeleteSources(1, &sourceid);
-		alDeleteBuffers(1, &bufferid);
+		//alDeleteBuffers(1, &bufferid);
 
 
 
@@ -403,8 +400,8 @@ int main()
 		alcDestroyContext(currentContext);
 		alcCloseDevice(myDevice);
 
-		delete[] data;
-		data = nullptr;
+		//delete[] data;
+		//data = nullptr;
 
 
 		
