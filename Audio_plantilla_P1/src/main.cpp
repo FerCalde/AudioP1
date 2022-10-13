@@ -51,77 +51,10 @@ double mouseYpos(0);
 float fToleranceMovement = 1.f;
 
 
-
-
 /* VARIABLES PRACTICA 4*/
 const char* bee_fileName = "data/bee_anim.png";
 
 void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime);
-
-
-
-
-
-
-
-bool isBigEndian()
-{
-	int a = 1;
-	return !((char*)&a)[0];
-}
-
-int convertToInt(char* buffer, int len)
-{
-	int a = 0;
-	if (!isBigEndian())
-		for (int i = 0; i < len; i++)
-			((char*)&a)[i] = buffer[i];
-	else
-		for (int i = 0; i < len; i++)
-			((char*)&a)[3 - i] = buffer[i];
-	return a;
-}
-
-char* loadWAV(const char* fn, int& chan, int& samplerate, int& bps, int& size)
-{
-	char buffer[4];
-	std::ifstream in(fn, std::ios::binary);
-	in.read(buffer, 4);
-	if (strncmp(buffer, "RIFF", 4) != 0)
-	{
-		std::cout << "this is not a valid WAVE file" << std::endl;
-		return NULL;
-	}
-	in.read(buffer, 4);
-	in.read(buffer, 4);      //WAVE
-	in.read(buffer, 4);      //fmt
-	in.read(buffer, 4);      //16
-	in.read(buffer, 2);      //1
-	in.read(buffer, 2);
-	chan = convertToInt(buffer, 2);
-	in.read(buffer, 4);
-	samplerate = convertToInt(buffer, 4);
-	in.read(buffer, 4);
-	in.read(buffer, 2);
-	in.read(buffer, 2);
-	bps = convertToInt(buffer, 2);
-	in.read(buffer, 4);      //data
-	in.read(buffer, 4);
-	size = convertToInt(buffer, 4);
-	char* data = new char[size];
-	in.read(data, size);
-	return data;
-}
-
-
-
-
-
-
-
-
-
-
 
 
 int main()
@@ -159,41 +92,8 @@ int main()
 
 
 
-		//Carga de ficheros de Fuentes
+		//Carga de ficheros
 
-
-		//int channel, sampleRate, bps, size;
-		//char* data = loadWAV("E:/123 MasterProgra 2021/Master Programación 2021 2022/AudioClases/p1Audio/New folder/Practica de Audio/plantilla/data/file1.wav", channel, sampleRate, bps, size);
-		//unsigned int bufferid, format;
-		//alGetError();
-		//alGenBuffers(1, &bufferid);
-		//if ((error = alGetError()) != AL_NO_ERROR)
-		//{
-		//	DisplayALError("alGenBuffers: ", error);
-		//}*/
-		//if (channel == 1)
-		//{
-		//	if (bps == 8)
-		//	{
-		//		format = AL_FORMAT_MONO8;
-		//	}
-		//	else
-		//	{
-		//		format = AL_FORMAT_MONO16;
-		//	}
-		//}
-		//else
-		//{
-		//	if (bps == 8)
-		//	{
-		//		format = AL_FORMAT_STEREO8;
-		//	}
-		//	else
-		//	{
-		//		format = AL_FORMAT_STEREO16;
-		//	}
-		//}
-		//alBufferData(bufferid, format, data, size, sampleRate);
 
 		//CREATE BUFFER
 		AudioBuffer* myAudioBuffer = new AudioBuffer("data/CantinaBand60.wav");
@@ -210,10 +110,6 @@ int main()
 		//alGenSources(1, &sourceid);
 		//alSourcei(sourceid, AL_BUFFER, bufferid);
 		//alSourcePlay(sourceid);
-
-
-
-
 
 
 #pragma region LOAD_FONTS
@@ -425,13 +321,9 @@ int main()
 
 		delete myAudioSource;
 		myAudioSource = nullptr;
-		myAudioBuffer = nullptr;
+		myAudioBuffer = nullptr; //El delete de AudioBuffer se hace en el destructor del AudioSource (No es del todo buena idea por si varios AudioSources utilizasen el mismo buffer)
 		delete myAudioListener;
 		myAudioListener = nullptr;
-
-		//alDeleteSources(1, &sourceid);
-	   //alDeleteBuffers(1, &bufferid);
-
 
 
 		ALCcontext* currentContext = alcGetCurrentContext();
@@ -440,13 +332,7 @@ int main()
 		alcDestroyContext(currentContext);
 		alcCloseDevice(myDevice);
 
-		//delete[] data;
-		//data = nullptr;
-
-
-
-
-
+		
 
 		std::cout << "Terminar GLFW \n";
 		glfwTerminate();
@@ -465,6 +351,7 @@ int main()
 
 	return 0;
 }
+
 void CallbackUpdateSprite(Sprite& _sprite, float _fDeltaTime)
 {
 	//Way to Transform object follow this rule: Scale -> Rotate -> Traslate
